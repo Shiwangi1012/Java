@@ -1,0 +1,88 @@
+#include <stdio.h>
+
+// Function to merge 3 parts
+void merge(int arr[], int l, int m1, int m2, int r)
+{
+    int n1 = m1 - l + 1;
+    int n2 = m2 - m1;
+    int n3 = r - m2;
+
+    int L[n1], M[n2], R[n3];
+
+    int i, j, k;
+
+    // Copy data into temporary arrays
+    for(i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+
+    for(i = 0; i < n2; i++)
+        M[i] = arr[m1 + 1 + i];
+
+    for(i = 0; i < n3; i++)
+        R[i] = arr[m2 + 1 + i];
+
+    i = j = k = 0;
+    int x = l;
+
+    // Merge all three arrays
+    while(i < n1 && j < n2 && k < n3)
+    {
+        if(L[i] <= M[j] && L[i] <= R[k])
+            arr[x++] = L[i++];
+        else if(M[j] <= L[i] && M[j] <= R[k])
+            arr[x++] = M[j++];
+        else
+            arr[x++] = R[k++];
+    }
+
+    // Merge remaining two arrays
+    while(i < n1 && j < n2)
+        arr[x++] = (L[i] <= M[j]) ? L[i++] : M[j++];
+
+    while(j < n2 && k < n3)
+        arr[x++] = (M[j] <= R[k]) ? M[j++] : R[k++];
+
+    while(i < n1 && k < n3)
+        arr[x++] = (L[i] <= R[k]) ? L[i++] : R[k++];
+
+    // Copy remaining elements
+    while(i < n1)
+        arr[x++] = L[i++];
+
+    while(j < n2)
+        arr[x++] = M[j++];
+
+    while(k < n3)
+        arr[x++] = R[k++];
+}
+
+// 3-way Merge Sort function
+void mergesort(int arr[], int l, int r)
+{
+    if(l < r)
+    {
+        int m1 = l + (r - l) / 3;
+        int m2 = l + 2 * (r - l) / 3;
+
+        mergesort(arr, l, m1);
+        mergesort(arr, m1 + 1, m2);
+        mergesort(arr, m2 + 1, r);
+
+        merge(arr, l, m1, m2, r);
+    }
+}
+
+// Main function
+int main()
+{
+    int arr[] = {45, 12, 78, 34, 23, 90, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    mergesort(arr, 0, n - 1);
+
+    printf("Sorted array:\n");
+    for(int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+
+    return 0;
+}
